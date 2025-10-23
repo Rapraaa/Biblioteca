@@ -1,0 +1,8 @@
+<odoo>
+  <record id="seq_biblioteca_prestamo" model="ir.sequence">
+    <field name="name">Secuencia de Préstamos</field>
+    <field name="code">biblioteca.prestamo</field>
+    <field name="prefix">PRE-</field>
+    <field name="padding">4</field>
+  </record>
+</odoo>

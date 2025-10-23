@@ -1,0 +1,214 @@
+from odoo import api, fields, models
+
+# ================== PRÉSTAMO ==================
+class BibliotecaPrestamo(models.Model):
+    _name = 'biblioteca.prestamo'
+    _description = 'Préstamo'
+    _inherit = ['mail.thread', 'mail.activity.mixin']  # para tracking
+
+    name = fields.Char(string='Código del Préstamo', required=True)
+    fecha_prestamo = fields.Date(string='Fecha de Préstamo', required=True)
+    fecha_vencimiento = fields.Date(string='Fecha de Vencimiento')
+    fecha_devolucion = fields.Date(string='Fecha de Devolución')
+    socio_id = fields.Many2one('res.partner', string='Socio')
+    libro_id = fields.Many2one('biblioteca.libro', string='Libro', required=True)
+    estado = fields.Selection(
+        [('pendiente', 'Pendiente'),
+         ('devuelto', 'Devuelto'),
+         ('vencido', 'Vencido')],
+        string='Estado',
+        default='pendiente',
+        tracking=True
+    )
+    dias_atraso = fields.Integer(
+        string='Días de atraso',
+        compute='_compute_dias_atraso',
+        store=True
+    )
+
+    # NUEVO: relación a multas y monto total
+    multas_ids = fields.One2many(
+        'biblioteca.multa', 'prestamo_id', string='Multas'
+    )
+    monto_multa = fields.Float(
+        string='Monto total de multas',
+        compute='_compute_monto_multa',
+        store=True
+    )
+
+    @api.depends('fecha_vencimiento', 'fecha_devolucion')
+    def _compute_dias_atraso(self):
+        today = fields.Date.context_today(self)
+        for r in self:
+            if r.fecha_vencimiento:
+                fin = r.fecha_devolucion or today
+                r.dias_atraso = max((fin - r.fecha_vencimiento).days, 0)
+            else:
+                r.dias_atraso = 0
+
+    @api.depends('multas_ids.monto')
+    def _compute_monto_multa(self):
+        for r in self:
+            r.monto_multa = sum(r.montas_ids.mapped('monto')) if r.multas_ids else 0.0
+
+# ================== MULTA ==================
+class BibliotecaMulta(models.Model):
+from odoo import api, fields, models
+
+class BibliotecaPrestamo(models.Model):
+    _name = 'biblioteca.prestamo'
+    _description = 'Préstamo'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    name = fields.Char(string='Código del Préstamo', required=True)
+    fecha_prestamo = fields.Date(string='Fecha de Préstamo', required=True)
+    fecha_vencimiento = fields.Date(string='Fecha de Vencimiento')
+    fecha_devolucion = fields.Date(string='Fecha de Devolución')
+    socio_id = fields.Many2one('res.partner', string='Socio')
+    libro_id = fields.Many2one('biblioteca.libro', string='Libro', required=True)
+
+    # Estados alineados con la vista
+    estado = fields.Selection(
+        [
+            ('borrador', 'Borrador'),
+            ('prestado', 'Prestado'),
+            ('atrasado', 'Atrasado'),
+            ('devuelto', 'Devuelto'),
+            ('cancelado', 'Cancelado'),
+        ],
+        string='Estado',
+        default='borrador',
+        tracking=True
+    )
+
+    dias_atraso = fields.Integer(
+        string='Días de atraso',
+        compute='_compute_dias_atraso',
+        store=True
+    )
+
+    multas_ids = fields.One2many(
+        'biblioteca.multa', 'prestamo_id', string='Multas'
+    )
+    monto_multa = fields.Float(
+        string='Monto total de multas',
+        compute='_compute_monto_multa',
+        store=True
+    )
+
+    @api.depends('fecha_vencimiento', 'fecha_devolucion', 'estado')
+    def _compute_dias_atraso(self):
+        today = fields.Date.context_today(self)
+        for r in self:
+            if not r.fecha_vencimiento:
+                r.dias_atraso = 0
+                continue
+            fin = r.fecha_devolucion or today
+            r.dias_atraso = max((fin - r.fecha_vencimiento).days, 0)
+
+    @api.depends('multas_ids.monto')
+    def _compute_monto_multa(self):
+        for r in self:
+            r.monto_multa = sum(r.multas_ids.mapped('monto')) if r.multas_ids else 0.0
+
+    # Acciones de barra (las que la vista llama)
+    def action_confirmar(self):
+        """Pasa de borrador a prestado y, si no hay fecha de vencimiento, pone +14 días."""
+        for r in self:
+            if r.estado == 'borrador':
+                if not r.fecha_vencimiento and r.fecha_prestamo:
+                    r.fecha_vencimiento = fields.Date.add(r.fecha_prestamo, days=14)
+                r.estado = 'prestado'
+        return True
+
+    def action_devolver(self):
+        """Registra devolución y marca estado en devuelto (o atrasado si corresponde)."""
+        today = fields.Date.context_today(self)
+        for r in self:
+            r.fecha_devolucion = today
+            if r.fecha_vencimiento and r.fecha_devolucion > r.fecha_vencimiento:
+                r.estado = 'atrasado'  # Puedes cambiar a 'devuelto' si prefieres cerrar directo
+            else:
+                r.estado = 'devuelto'
+        return True
+
+    def action_cancelar(self):
+        """Cancela el préstamo si aún no fue devuelto."""
+        for r in self:
+            if r.estado in ('borrador', 'prestado', 'atrasado'):
+                r.estado = 'cancelado'
+        return True
+class BibliotecaMulta(models.Model):
+    _name = 'biblioteca.multa'
+    _description = 'Multa'
+
+    prestamo_id = fields.Many2one('biblioteca.prestamo', string='Préstamo')
+    monto = fields.Float(string='Monto de la Multa', required=True)
+    motivo = fields.Text(string='Motivo')
+    fecha_multa = fields.Date(string='Fecha de Multa', required=True)
+
+# ================== AUTOR ==================
+class BibliotecaAutor(models.Model):
+    _name = 'biblioteca.autor'
+    _description = 'Autor de biblioteca'
+    _rec_name = 'name'
+
+    name = fields.Char(string='Nombre Completo', compute='_compute_name', store=True)
+    firstname = fields.Char(string='Nombres', required=True)
+    lastname = fields.Char(string='Apellidos')
+    libros_autores = fields.Many2many(
+        'biblioteca.libro',
+        'biblioteca_libros_autor_rel',
+        'author_id',
+        'libro_id',
+        string='Libros (N:N)'
+    )
+
+    @api.depends('firstname', 'lastname')
+    def _compute_name(self):
+        for record in self:
+            record.name = f"{record.firstname or ''} {record.lastname or ''}".strip()
+
+# ================== MODELOS AUXILIARES ==================
+class BibliotecaEditorial(models.Model):
+    _name = 'biblioteca.editorial'
+    _description = 'Editorial'
+    name = fields.Char(string='Nombre', required=True)
+    active = fields.Boolean(default=True)
+
+class BibliotecaGenero(models.Model):
+    _name = 'biblioteca.genero'
+    _description = 'Género'
+    name = fields.Char(string='Nombre', required=True)
+    active = fields.Boolean(default=True)
+
+class BibliotecaUbicacion(models.Model):
+    _name = 'biblioteca.ubicacion'
+    _description = 'Ubicación'
+    name = fields.Char(string='Nombre', required=True)
+    active = fields.Boolean(default=True)
+
+# ================== LIBRO ==================
+class BibliotecaLibro(models.Model):
+    _name = 'biblioteca.libro'
+    _description = 'Libro de biblioteca'
+
+    name = fields.Char(string='Título', required=True)
+    autor_id = fields.Many2one('biblioteca.autor', string='Autor Principal')
+    autores_multiples = fields.Many2many(
+        'biblioteca.autor',
+        'biblioteca_libros_autor_rel',
+        'libro_id',
+        'author_id',
+        string='Autores (N:N)'
+    )
+    categoria = fields.Char(string='Categoría')
+    genero_id = fields.Many2one('biblioteca.genero', string='Género (catálogo)')
+    anio_pub = fields.Integer(string='Año de publicación')
+    editorial_id = fields.Many2one('biblioteca.editorial', string='Editorial')
+    numero = fields.Char(string='Número')
+    estado = fields.Char(string='Estado')
+    costo = fields.Float(string='Costo')
+    ubicacion_id = fields.Many2one('biblioteca.ubicacion', string='Ubicación')
+    descripcion = fields.Text(string='Descripción')
+    disponible = fields.Boolean(string='Disponible', default=True)

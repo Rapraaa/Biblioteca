@@ -1,0 +1,54 @@
+<odoo>
+  
+  <record id="view_biblioteca_libro_tree" model="ir.ui.view">
+    <field name="name">biblioteca.libro.tree</field>
+    <field name="model">biblioteca.libro</field>
+    <field name="arch" type="xml">
+      <list string="Libros">
+        <field name="name" string="Título"/>
+        <field name="autor_id" string="Autor"/>
+        <field name="isbn" string="ISBN"/>
+        <field name="anio_pub" string="Año"/>
+        <field name="number_of_pages" string="Páginas"/>
+        <field name="estado" string="Estado"/>
+        <field name="openlib_key" string="OpenLibrary Key"/>
+      </list>
+    </field>
+  </record>
+
+
+  <record id="view_biblioteca_libro_form" model="ir.ui.view">
+    <field name="name">biblioteca.libro.form</field>
+    <field name="model">biblioteca.libro</field>
+    <field name="arch" type="xml">
+      <form string="Libro">
+        <sheet>
+          <group>
+            <field name="name" string="Título"/>
+            <field name="autor_id" string="Autor"/>
+            <field name="isbn" string="ISBN"/>
+            <field name="anio_pub" string="Año de publicación"/>
+            <field name="number_of_pages" string="Nº de páginas"/>
+            <field name="estado" string="Estado"/>
+            <field name="openlib_key" string="OpenLibrary Key" readonly="1"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  
+  <record id="view_biblioteca_libro_search" model="ir.ui.view">
+    <field name="name">biblioteca.libro.search</field>
+    <field name="model">biblioteca.libro</field>
+    <field name="arch" type="xml">
+      <search string="Buscar libros">
+        <field name="name"/>
+        <field name="autor_id"/>
+        <field name="isbn"/>
+        <field name="anio_pub"/>
+        <filter string="Disponibles" name="disponibles" domain="[('estado','=','disponible')]"/>
+      </search>
+    </field>
+  </record>
+</odoo>

@@ -1,0 +1,43 @@
+<odoo>
+
+  <record id="view_biblioteca_autor_tree" model="ir.ui.view">
+    <field name="name">biblioteca.autor.tree</field>
+    <field name="model">biblioteca.autor</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="name" string="Nombre"/>
+        <field name="openlib_key"/>
+        <field name="birth_date"/>
+        <field name="death_date"/>
+      </list>
+    </field>
+  </record>
+
+
+  <record id="view_biblioteca_autor_form" model="ir.ui.view">
+    <field name="name">biblioteca.autor.form</field>
+    <field name="model">biblioteca.autor</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="boton_openlib"
+                  type="object"
+                  class="oe_highlight"
+                  string="Buscar en OpenLibrary"/>
+        </header>
+        <sheet>
+          <group>
+            <field name="name" string="Nombre"/>
+            <field name="openlib_key" readonly="1"/>
+            <field name="birth_date"/>
+            <field name="death_date"/>
+            <field name="openlib_last_sync" readonly="1"/>
+          </group>
+          <group>
+            <field name="bio" widget="text" placeholder="Biografía desde OpenLibrary..."/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+</odoo>

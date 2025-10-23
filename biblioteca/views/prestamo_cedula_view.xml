@@ -1,0 +1,12 @@
+<odoo>
+  <record id="view_biblioteca_prestamo_form_cedula" model="ir.ui.view">
+    <field name="name">biblioteca.prestamo.form.cedula</field>
+    <field name="model">biblioteca.prestamo</field>
+    <field name="inherit_id" ref="biblioteca.view_biblioteca_prestamo_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='socio_id']" position="after">
+        <field name="socio_cedula" readonly="1"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

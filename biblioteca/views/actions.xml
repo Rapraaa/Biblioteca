@@ -1,0 +1,31 @@
+<odoo>
+  <record id="action_biblioteca_libro" model="ir.actions.act_window">
+    <field name="name">Libros</field>
+    <field name="res_model">biblioteca.libro</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <record id="action_biblioteca_autor" model="ir.actions.act_window">
+    <field name="name">Autores</field>
+    <field name="res_model">biblioteca.autor</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <record id="action_biblioteca_prestamo" model="ir.actions.act_window">
+    <field name="name">Préstamos</field>
+    <field name="res_model">biblioteca.prestamo</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <record id="action_biblioteca_multa" model="ir.actions.act_window">
+    <field name="name">Multas</field>
+    <field name="res_model">biblioteca.multa</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <record id="action_biblioteca_usuario" model="ir.actions.act_window">
+    <field name="name">Usuarios</field>
+    <field name="res_model">biblioteca.usuario</field>
+    <field name="view_mode">list,form</field>
+  </record>
+</odoo>

@@ -1,0 +1,15 @@
+<odoo>
+  <record id="action_biblioteca_prestamo" model="ir.actions.act_window">
+    <field name="name">Biblioteca</field>
+    <field name="res_model">biblioteca.prestamo</field>
+    <field name="view_mode">list,form</field>
+    <field name="target">current</field>
+  </record>
+
+  <menuitem id="menu_biblioteca_root" name="Biblioteca" sequence="10"/>
+  <menuitem id="menu_biblioteca_prestamo"
+            name="Préstamos"
+            parent="menu_biblioteca_root"
+            action="action_biblioteca_prestamo"
+            sequence="10"/>
+</odoo>

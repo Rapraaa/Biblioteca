@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_biblioteca_libro_user,Biblioteca Libro,model_biblioteca_libro,base.group_user,1,1,1,1
+access_biblioteca_prestamo_user,Biblioteca Prestamo,model_biblioteca_prestamo,base.group_user,1,1,1,1
+access_biblioteca_multa_user,Biblioteca Multa,model_biblioteca_multa,base.group_user,1,1,1,1
+access_biblioteca_autor,biblioteca.autor,model_biblioteca_autor,base.group_user,1,1,1,1
+# access rules for biblioteca.usuario
+access_biblioteca_usuario_user,biblioteca.usuario user,model_biblioteca_usuario,base.group_user,1,1,1,1
+access_biblioteca_usuario_manager,biblioteca.usuario manager,model_biblioteca_usuario,base.group_system,1,1,1,1

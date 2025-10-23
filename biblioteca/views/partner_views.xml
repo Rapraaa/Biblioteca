@@ -1,0 +1,13 @@
+<odoo>
+  <record id="view_partner_form_biblioteca_cedula" model="ir.ui.view">
+    <field name="name">res.partner.form.biblioteca.cedula</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+
+      <xpath expr="//sheet//group[1]" position="inside">
+        <field name="cedula" placeholder="Ej: 0912345678"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

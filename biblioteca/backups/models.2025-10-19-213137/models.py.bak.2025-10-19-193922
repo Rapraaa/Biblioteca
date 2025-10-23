@@ -1,0 +1,102 @@
+from odoo import api, fields, models
+
+# ================== PRÉSTAMO ==================
+class BibliotecaPrestamo(models.Model):
+    _name = 'biblioteca.prestamo'
+    _description = 'Préstamo'
+    _inherit = ['mail.thread', 'mail.activity.mixin']  # para tracking
+
+    name = fields.Char(string='Código del Préstamo', required=True)
+    fecha_prestamo = fields.Date(string='Fecha de Préstamo', required=True)
+    fecha_devolucion = fields.Date(string='Fecha de Devolución')
+    socio_id = fields.Many2one('res.partner', string='Socio')
+    libro_id = fields.Many2one('biblioteca.libro', string='Libro', required=True)
+    estado = fields.Selection(
+        [('pendiente', 'Pendiente'),
+         ('devuelto', 'Devuelto'),
+         ('vencido', 'Vencido')],
+        string='Estado',
+        default='pendiente',
+        tracking=True
+    )
+
+# ================== MULTA ==================
+class BibliotecaMulta(models.Model):
+    _name = 'biblioteca.multa'
+    _description = 'Multa'
+
+    prestamo_id = fields.Many2one('biblioteca.prestamo', string='Préstamo')
+    monto = fields.Float(string='Monto de la Multa', required=True)
+    motivo = fields.Text(string='Motivo')
+    fecha_multa = fields.Date(string='Fecha de Multa', required=True)
+
+# ================== AUTOR ==================
+class BibliotecaAutor(models.Model):
+    _name = 'biblioteca.autor'
+    _description = 'Autor de biblioteca'
+    _rec_name = 'name'
+
+    name = fields.Char(string='Nombre Completo', compute='_compute_name', store=True)
+    firstname = fields.Char(string='Nombres', required=True)
+    lastname = fields.Char(string='Apellidos')
+    libros_autores = fields.Many2many(
+        'biblioteca.libro',
+        'biblioteca_libros_autor_rel',
+        'author_id',
+        'libro_id',
+        string='Libros (N:N)'
+    )
+
+    @api.depends('firstname', 'lastname')
+    def _compute_name(self):
+        for record in self:
+            record.name = f"{record.firstname or ''} {record.lastname or ''}".strip()
+
+# ================== MODELOS AUXILIARES ==================
+class BibliotecaEditorial(models.Model):
+    _name = 'biblioteca.editorial'
+    _description = 'Editorial'
+    name = fields.Char(string='Nombre', required=True)
+    active = fields.Boolean(default=True)
+
+class BibliotecaGenero(models.Model):
+    _name = 'biblioteca.genero'
+    _description = 'Género'
+    name = fields.Char(string='Nombre', required=True)
+    active = fields.Boolean(default=True)
+
+class BibliotecaUbicacion(models.Model):
+    _name = 'biblioteca.ubicacion'
+    _description = 'Ubicación'
+    name = fields.Char(string='Nombre', required=True)
+    active = fields.Boolean(default=True)
+
+# ================== LIBRO ==================
+class BibliotecaLibro(models.Model):
+    _name = 'biblioteca.libro'
+    _description = 'Libro de biblioteca'
+
+    # Título
+    name = fields.Char(string='Título', required=True)
+    # Relación principal a Autor
+    autor_id = fields.Many2one('biblioteca.autor', string='Autor Principal')
+    # Autores múltiples (N:N)
+    autores_multiples = fields.Many2many(
+        'biblioteca.autor',
+        'biblioteca_libros_autor_rel',
+        'libro_id',
+        'author_id',
+        string='Autores (N:N)'
+    )
+    # Campos que la vista espera
+    categoria = fields.Char(string='Categoría')
+    genero_id = fields.Many2one('biblioteca.genero', string='Género (catálogo)')
+    anio_pub = fields.Integer(string='Año de publicación')
+    editorial_id = fields.Many2one('biblioteca.editorial', string='Editorial')
+    numero = fields.Char(string='Número')
+    estado = fields.Char(string='Estado')
+    costo = fields.Float(string='Costo')
+    ubicacion_id = fields.Many2one('biblioteca.ubicacion', string='Ubicación')
+    descripcion = fields.Text(string='Descripción')
+    # Disponibilidad
+    disponible = fields.Boolean(string='Disponible', default=True)
