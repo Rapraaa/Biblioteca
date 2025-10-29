@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.actions.act_window" id="biblioteca_configuracion_action_window">
+        <field name="name">Configuración de Multas</field>
+        <field name="res_model">biblioteca.configuracion</field>
+        <field name="view_mode">form</field>
+    </record>
+
+    <record model="ir.ui.view" id="biblioteca_configuracion_form">
+        <field name="name">biblioteca.configuracion.form</field>
+        <field name="model">biblioteca.configuracion</field>
+        <field name="arch" type="xml">
+            <form string="Configuración">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="dias_prestamo"/>
+                            <field name="monto_multa_dia"/>
+                        </group>
+                        <group>
+                            <field name="dias_gracia_notificacion"/>
+                            <field name="email_biblioteca"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <menuitem name="Configuración" 
+              id="biblioteca.menu_configuracion" 
+              parent="biblioteca_menu" 
+              action="biblioteca_configuracion_action_window" 
+              sequence="100"/>
+</odoo>
