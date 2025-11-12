@@ -1,0 +1,358 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="biblioteca_practica.list">
+      <field name="name">biblioteca_practica list</field>
+      <field name="model">biblioteca_practica.biblioteca_practica</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </list>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="biblioteca_practica.action_window">
+      <field name="name">biblioteca_practica window</field>
+      <field name="res_model">biblioteca_practica.biblioteca_practica</field>
+      <field name="view_mode">list,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="biblioteca_practica.action_server">
+      <field name="name">biblioteca_practica server</field>
+      <field name="model_id" ref="model_biblioteca_practica_biblioteca_practica"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "list,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="biblioteca_practica" id="biblioteca_practica.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="biblioteca_practica.menu_1" parent="biblioteca_practica.menu_root"/>
+    <menuitem name="Menu 2" id="biblioteca_practica.menu_2" parent="biblioteca_practica.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="biblioteca_practica.menu_1_list" parent="biblioteca_practica.menu_1"
+              action="biblioteca_practica.action_window"/>
+    <menuitem name="Server to list" id="biblioteca_practica" parent="biblioteca_practica.menu_2"
+              action="biblioteca_practica.action_server"/>
+-->
+
+
+
+<!--##########################################
+###          LISTAS  ########
+#############################
+-->
+<!-- BIBLIOTECA LIBRO 
+
+-->
+    <record model="ir.ui.view" id="libro_list">
+      <field name="name">biblioteca_libro list</field>
+      <field name="model">biblioteca.libro</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="titulo"/>
+          <field name="autor"/>
+          <field name="ejemplares"/>
+          <field name="costo"/>
+          <field name="descripcion"/>
+          <field name="fecha_publicacion"/>
+          <field name="genero"/>
+          <field name="isbn"/>
+          <field name="paginas"/>
+          <field name="editorial"/>
+          <field name="ubicacion"/>
+        </list>
+      </field>
+    </record>
+
+
+<!-- BIBLIOTECA AUTOR
+-->
+
+<record model="ir.ui.view" id="autor_list">
+      <field name="name">biblioteca_autor list</field>
+      <field name="model">biblioteca.autor</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="nombre"/>
+          <field name="apellido"/>
+          <field name="nacimiento"/>
+          <field name="libros"/>
+        </list>
+      </field>
+    </record>
+
+<!-- BIBLIOTECA EDITORIAL
+-->
+
+<record model="ir.ui.view" id="editorial_list">
+      <field name="name">biblioteca_editorial list</field>
+      <field name="model">biblioteca.editorial</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="nombre"/>
+          <field name="pais"/>
+          <field name="ciudad"/>
+        </list>
+      </field>
+    </record>
+
+<!-- BIBLIOTECA USUARIO
+-->
+
+<record model="ir.ui.view" id="usuario_list">
+    <field name="name">biblioteca_usuario list</field>
+    <field name="model">biblioteca.usuario</field>
+    <field name="arch" type="xml">
+        <tree>
+            <field name="nombre_completo"/>
+            <field name="cedula"/>
+            <field name="email"/>
+            <field name="phone"/>
+            <field name="active" invisible="1"/> <!--#pa que el usuario no lo vea-->
+        </tree>
+    </field>
+
+
+<!-- BIBLIOTECA USUARIOS
+
+-->
+
+<record model="ir.ui.view" id="prestamo_list">
+    <field name="name">biblioteca.prestamo list</field>
+    <field name="model">biblioteca.prestamo</field>
+    <field name="arch" type="xml">
+        <tree>
+            <field name="name"/>
+            <field name="libro_id"/>
+            <field name="usuario_id"/>
+            <field name="fecha_prestamo"/>
+            <field name="estado"/>
+        </tree>
+    </field>
+</record>
+
+<record model="ir.ui.view" id="prestamo_form">
+    <field name="name">biblioteca_prestamo form</field>
+    <field name="model">biblioteca.prestamo</field>
+    <field name="arch" type="xml">
+        <form>
+            <header>
+                <field name="estado" widget="statusbar" clickable="True"/>
+            </header>
+            <sheet>
+                <group>
+                    <field name="name"/>
+                    <field name="libro_id"/>
+                    <field name="usuario_id"/>
+                    <field name="fecha_prestamo"/>
+                    <field name="fecha_devolucion"/>
+                    <field name="fecha_maxima" readonly="1"/> <!-- INEDITABLE -->
+                </group>
+                <group string="Multa">
+                    <field name="multa_bol"/>
+                    <field name="multa"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!--##########################################
+###          FORMS   ########
+#############################
+-->
+
+<!-- BIBLIOTECA LIBRO 
+
+-->
+    <record model="ir.ui.view" id="libro_form">
+      <field name="name">biblioteca libro form</field>
+      <field name="model">biblioteca.libro</field>
+      <field name="arch" type="xml">
+        <form>
+        <group>
+          <field name="titulo"/>
+          <field name="autor"/>
+          <field name="ejemplares"/>
+          <field name="costo"/>
+          <field name="descripcion"/>
+          <field name="fecha_publicacion"/>
+          <field name="genero"/>
+          <field name="isbn"/>
+          <field name="paginas"/>
+          <field name="editorial"/>
+          <field name="ubicacion"/>
+        </group>
+        </form>
+      </field>
+    </record>
+
+<!-- BIBLIOTECA AUTOR
+
+-->
+    <record model="ir.ui.view" id="autor_form">
+      <field name="name">biblioteca autor form</field>
+      <field name="model">biblioteca.autor</field>
+      <field name="arch" type="xml">
+        <form>
+        <group>
+          <field name="nombre"/>
+          <field name="apellido"/>
+          <field name="nacimiento"/>
+          <field name="libros"/>
+        </group>
+        </form>
+      </field>
+    </record>
+
+
+
+<!-- BIBLIOTECA EDITORIAL
+
+-->
+
+    <record model="ir.ui.view" id="editorial_form">
+      <field name="name">biblioteca editorial form</field>
+      <field name="model">biblioteca.editorial</field>
+      <field name="arch" type="xml">
+        <form>
+        <group>
+          <field name="nombre"/>
+          <field name="pais"/>
+          <field name="ciudad"/>
+        </group>
+        </form>
+      </field>
+    </record>
+
+<!-- BIBLIOTECA USUARIOS
+
+-->
+<record model="ir.ui.view" id="usuario_form">
+    <field name="name">biblioteca_usuario form</field>
+    <field name="model">biblioteca.usuario</field>
+    <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <field name="nombre"/>
+                    <field name="apellido"/>
+                    <field name="nombre_completo" readonly="1"/>  <!--EL USUARIO NO PUEDE CAMBIARLO-->
+                </group> <!-- agrupamos en 2 grupos para que se vea mas esteticos, primero nombres luego datos-->
+                <group string="Información de Contacto">
+                    <field name="cedula"/>
+                    <field name="email"/>
+                    <field name="phone"/>
+                    <field name="active"/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<!--##########################################
+###         ACTION WINDOWS   ########
+#############################
+-->
+
+<!-- BIBLIOTECA LIBRO 
+
+-->
+
+    <record model="ir.actions.act_window" id="biblioteca_libro_action_window">
+      <field name="name">biblioteca libro window</field>
+      <field name="res_model">biblioteca.libro</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+
+<!-- BIBLIOTECA autor
+
+-->
+  
+ <record model="ir.actions.act_window" id="biblioteca_autor_action_window">
+      <field name="name">biblioteca autor window</field>
+      <field name="res_model">biblioteca.autor</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+
+<!-- BIBLIOTECA EDITORIAL 
+
+-->
+
+
+ <record model="ir.actions.act_window" id="biblioteca_editorial_action_window">
+      <field name="name">biblioteca editorial window</field>
+      <field name="res_model">biblioteca.editorial</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+
+<!--##########################################
+###         ACTION WINDOWS   ########
+#############################
+-->
+
+    <menuitem name="biblioteca_practica" id="biblioteca_practica_menu"/>  <!-- EL MENU DE LA IZQUIERDA-->
+
+<!-- BIBLIOTECA LIBRO
+-->
+ <!-- MENUS DE ARRIBA CUANDO YA ENTRAS -->
+    <menuitem name="Libro menu"    
+    id="biblioteca_practica_libro" 
+    parent="biblioteca_practica_menu"
+    action="biblioteca_libro_action_window"
+    />
+
+<!-- BIBLIOTECA AUTOR
+
+-->
+
+    <menuitem name="Autor menu" 
+    id="biblioteca_practica_autor" 
+    parent="biblioteca_practica_menu"
+    action="biblioteca_autor_action_window"
+    />
+
+<!-- BIBLIOTECA EDITORIAL 
+
+-->
+
+    <menuitem name="Editorial menu" 
+    id="biblioteca_practica_editorial" 
+    parent="biblioteca_practica_menu"
+    action="biblioteca_editorial_action_window"
+    />
+
+
+
+
+
+
+
+      </data>
+</odoo>
+
