@@ -90,94 +90,72 @@
 <!-- BIBLIOTECA AUTOR
 -->
 
-<record model="ir.ui.view" id="autor_list">
-      <field name="name">biblioteca_autor list</field>
-      <field name="model">biblioteca.autor</field>
-      <field name="arch" type="xml">
-        <list>
-          <field name="nombre"/>
-          <field name="apellido"/>
-          <field name="nacimiento"/>
-          <field name="libros"/>
-        </list>
-      </field>
-    </record>
+    <record model="ir.ui.view" id="autor_list">
+          <field name="name">biblioteca_autor list</field>
+          <field name="model">biblioteca.autor</field>
+          <field name="arch" type="xml">
+            <list>
+              <field name="nombre"/>
+              <field name="apellido"/>
+              <field name="nacimiento"/>
+              <field name="libros"/>
+            </list>
+          </field>
+        </record>
 
 <!-- BIBLIOTECA EDITORIAL
 -->
 
-<record model="ir.ui.view" id="editorial_list">
-      <field name="name">biblioteca_editorial list</field>
-      <field name="model">biblioteca.editorial</field>
-      <field name="arch" type="xml">
-        <list>
-          <field name="nombre"/>
-          <field name="pais"/>
-          <field name="ciudad"/>
-        </list>
-      </field>
-    </record>
+    <record model="ir.ui.view" id="editorial_list">
+          <field name="name">biblioteca_editorial list</field>
+          <field name="model">biblioteca.editorial</field>
+          <field name="arch" type="xml">
+            <list>
+              <field name="nombre"/>
+              <field name="pais"/>
+              <field name="ciudad"/>
+            </list>
+          </field>
+        </record>
 
 <!-- BIBLIOTECA USUARIO
 -->
 
-<record model="ir.ui.view" id="usuario_list">
-    <field name="name">biblioteca_usuario list</field>
-    <field name="model">biblioteca.usuario</field>
-    <field name="arch" type="xml">
-        <tree>
-            <field name="nombre_completo"/>
-            <field name="cedula"/>
-            <field name="email"/>
-            <field name="phone"/>
-            <field name="active" invisible="1"/> <!--#pa que el usuario no lo vea-->
-        </tree>
-    </field>
+    <record model="ir.ui.view" id="usuario_list">
+        <field name="name">biblioteca_usuario list</field>
+        <field name="model">biblioteca.usuario</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="nombre"/>
+                <field name="apellido"/>
+                <field name="name"/>
+                <field name="cedula"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="active" invisible="1"/> <!--#pa que el usuario no lo vea-->
+            </list>
+        </field>
+      </record>
 
-
-<!-- BIBLIOTECA USUARIOS
+<!-- BIBLIOTECA PRESTAMO
 
 -->
 
-<record model="ir.ui.view" id="prestamo_list">
-    <field name="name">biblioteca.prestamo list</field>
-    <field name="model">biblioteca.prestamo</field>
-    <field name="arch" type="xml">
-        <tree>
-            <field name="name"/>
-            <field name="libro_id"/>
-            <field name="usuario_id"/>
-            <field name="fecha_prestamo"/>
-            <field name="estado"/>
-        </tree>
-    </field>
-</record>
+    <record model="ir.ui.view" id="prestamo_list">
+        <field name="name">biblioteca.prestamo list</field>
+        <field name="model">biblioteca.prestamo</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="libro_id"/>
+                <field name="usuario_id"/>
+                <field name="fecha_prestamo"/>
+                <field name="estado"/>
+            </list>
+        </field>
+    </record>
 
-<record model="ir.ui.view" id="prestamo_form">
-    <field name="name">biblioteca_prestamo form</field>
-    <field name="model">biblioteca.prestamo</field>
-    <field name="arch" type="xml">
-        <form>
-            <header>
-                <field name="estado" widget="statusbar" clickable="True"/>
-            </header>
-            <sheet>
-                <group>
-                    <field name="name"/>
-                    <field name="libro_id"/>
-                    <field name="usuario_id"/>
-                    <field name="fecha_prestamo"/>
-                    <field name="fecha_devolucion"/>
-                    <field name="fecha_maxima" readonly="1"/> <!-- INEDITABLE -->
-                </group>
-                <group string="Multa">
-                    <field name="multa_bol"/>
-                    <field name="multa"/>
-                </group>
-            </sheet>
-        </form>
-    </field>
-</record>
+
 
 <!--##########################################
 ###          FORMS   ########
@@ -250,27 +228,75 @@
 <!-- BIBLIOTECA USUARIOS
 
 -->
-<record model="ir.ui.view" id="usuario_form">
-    <field name="name">biblioteca_usuario form</field>
-    <field name="model">biblioteca.usuario</field>
-    <field name="arch" type="xml">
-        <form>
-            <sheet>
-                <group>
-                    <field name="nombre"/>
-                    <field name="apellido"/>
-                    <field name="nombre_completo" readonly="1"/>  <!--EL USUARIO NO PUEDE CAMBIARLO-->
-                </group> <!-- agrupamos en 2 grupos para que se vea mas esteticos, primero nombres luego datos-->
-                <group string="Información de Contacto">
-                    <field name="cedula"/>
-                    <field name="email"/>
-                    <field name="phone"/>
-                    <field name="active"/>
-                </group>
-            </sheet>
-        </form>
-    </field>
-</record>
+    <record model="ir.ui.view" id="usuario_form">
+        <field name="name">biblioteca_usuario form</field>
+        <field name="model">biblioteca.usuario</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="nombre"/>
+                        <field name="apellido"/>
+                        <field name="name" readonly="1"/>  <!--EL USUARIO NO PUEDE CAMBIARLO-->
+                    </group> <!-- agrupamos en 2 grupos para que se vea mas esteticos, primero nombres luego datos-->
+                    <group string="Información de Contacto">
+                        <field name="cedula"/>
+                        <field name="email"/>
+                        <field name="phone"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+<!-- BIBLIOTECA PRESTAMO
+
+-->
+
+    <record model="ir.ui.view" id="prestamo_form">
+        <field name="name">biblioteca_prestamo form</field>
+        <field name="model">biblioteca.prestamo</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="confirmar_prestamo"
+                    string= "Confirmar prestamo"
+                    type = "object"
+                    class = "oe_highlight" 
+                    invisible="[('estado', '!=', 'p')]"
+                    />
+                    <!-- EXPLICARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+
+-->
+
+                    <button name = "devolver"
+                    string = "Devolver"
+                    type = "object"
+                    class = "oe_highlight"
+                    invisible="[('estado', '!=', 'b')]"
+                    />
+                    <field name="estado" widget="statusbar" clickable="True"/>
+
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="libro_id"/>
+                        <field name="usuario_id"/>
+                        <field name="fecha_prestamo"/>
+                        <field name="fecha_devolucion"/>
+                        <field name="fecha_maxima" readonly="1"/> <!-- INEDITABLE -->
+                    </group>
+                    <group string="Multa">
+                        <field name="multa_bol"/>
+                        <field name="multa"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
 <!--##########################################
 ###         ACTION WINDOWS   ########
@@ -292,11 +318,11 @@
 
 -->
   
- <record model="ir.actions.act_window" id="biblioteca_autor_action_window">
-      <field name="name">biblioteca autor window</field>
-      <field name="res_model">biblioteca.autor</field>
-      <field name="view_mode">list,form</field>
-    </record>
+    <record model="ir.actions.act_window" id="biblioteca_autor_action_window">
+          <field name="name">biblioteca autor window</field>
+          <field name="res_model">biblioteca.autor</field>
+          <field name="view_mode">list,form</field>
+        </record>
 
 
 <!-- BIBLIOTECA EDITORIAL 
@@ -304,13 +330,29 @@
 -->
 
 
- <record model="ir.actions.act_window" id="biblioteca_editorial_action_window">
-      <field name="name">biblioteca editorial window</field>
-      <field name="res_model">biblioteca.editorial</field>
-      <field name="view_mode">list,form</field>
-    </record>
+    <record model="ir.actions.act_window" id="biblioteca_editorial_action_window">
+          <field name="name">biblioteca editorial window</field>
+          <field name="res_model">biblioteca.editorial</field>
+          <field name="view_mode">list,form</field>
+        </record>
+<!-- BIBLIOTECA USUARIOS
 
+-->
 
+    <record model="ir.actions.act_window" id="biblioteca_usuario_action_window">
+          <field name="name">biblioteca usuarios window</field>
+          <field name="res_model">biblioteca.usuario</field>
+          <field name="view_mode">list,form</field>
+        </record>
+
+<!-- BIBLIOTECA PRESTAMO
+
+-->
+    <record model="ir.actions.act_window" id="biblioteca_prestamo_action_window">
+          <field name="name">biblioteca prestamo window</field>
+          <field name="res_model">biblioteca.prestamo</field>
+          <field name="view_mode">list,form</field>
+        </record>
 <!--##########################################
 ###         ACTION WINDOWS   ########
 #############################
@@ -321,7 +363,7 @@
 <!-- BIBLIOTECA LIBRO
 -->
  <!-- MENUS DE ARRIBA CUANDO YA ENTRAS -->
-    <menuitem name="Libro menu"    
+    <menuitem name="Libros"    
     id="biblioteca_practica_libro" 
     parent="biblioteca_practica_menu"
     action="biblioteca_libro_action_window"
@@ -331,7 +373,7 @@
 
 -->
 
-    <menuitem name="Autor menu" 
+    <menuitem name="Autores" 
     id="biblioteca_practica_autor" 
     parent="biblioteca_practica_menu"
     action="biblioteca_autor_action_window"
@@ -341,18 +383,31 @@
 
 -->
 
-    <menuitem name="Editorial menu" 
+    <menuitem name="Editorial" 
     id="biblioteca_practica_editorial" 
     parent="biblioteca_practica_menu"
     action="biblioteca_editorial_action_window"
     />
 
+<!-- BIBLIOTECA USUARIO
 
+-->
 
+    <menuitem name="Usuarios" 
+    id="biblioteca_practica_usuario" 
+    parent="biblioteca_practica_menu"
+    action="biblioteca_usuario_action_window"
+    />
 
+<!-- BIBLIOTECA PRESTAMO
+-->
 
+    <menuitem name="Prestamos" 
+    id="biblioteca_practica_prestamo" 
+    parent="biblioteca_practica_menu"
+    action="biblioteca_prestamo_action_window"
+    />
 
-
-      </data>
+  </data>
 </odoo>
 

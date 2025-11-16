@@ -46,8 +46,8 @@ class biblioteca_libro(models.Model):
 
     available = fields.Boolean(
         string='Disponible', 
-        #compute='_compute_available', 
-        store=True,
+        #compute='_compute_available',    #boolean qyue avisa si esta o no esta disponivle el libro
+        store=True, #para que lo guarde en la base de datos
     )
 
 
@@ -69,12 +69,13 @@ class biblioteca_autor(models.Model):
 
     def name_get(self):   #es como ahcer un rec name pero se puede unir cosas, para unir el nombre y apellido queda mas sexy
         resultado = []    #nameget es un hook, Odoo tiene un motor interno que, cuando necesita obtener el nombre legible de un registro busca y llama directamente a una función que se llame name_get(self) en ese modelo.
-        for autor in self:
+        #se crea la lista vacia resultado 
+        for autor in self: #va a buscar los autores que tenga la base de datos
             # Combina el nombre y el apellido.
-            name = f"{autor.nombre} {autor.apellido}" 
-            # Añade una tupla (ID del registro, Nombre Completo) a la lista.
-            resultado.append((autor.id, name))
-        return resultado
+            name = f"{autor.nombre} {autor.apellido}" #crea el nombre completo, concatenando el autor nombre y autor apellido
+            # Añade una tupla (ID del registro, Nombre Completo) 
+            resultado.append((autor.id, name))  #agrega a la lista resultado el id del autor y el nombre completo
+        return resultado #nos regresa la lista
 
 class biblioteca_editorial(models.Model):
     _name = "biblioteca.editorial"
@@ -92,16 +93,18 @@ class biblioteca_prestamo(models.Model):
     _rec_name = 'name'  #es para que cuando se refieran a este en otra base de datos se muestre el name en lugar del biblioteca presamo y diga cuando prestamo es
     
     name = fields.Char(required=True, string='Prestamo')
-    fecha_prestamo = fields.Datetime(default=datetime.now()) #en caso de no poner fecha se pondra la actual
+    fecha_prestamo = fields.Datetime(default=fields.Datetime.now()) #en caso de no poner fecha se pondra la actual
     libro_id = fields.Many2one('biblioteca.libro') #extrae el id del libro
     usuario_id = fields.Many2one('biblioteca.usuario',string="Usuario")
     fecha_devolucion = fields.Datetime()
     multa_bol = fields.Boolean(default=False)
     multa = fields.Float()
-    fecha_maxima = fields.Datetime(compute='_compute_fecha_devolucion')
+    fecha_maxima = fields.Datetime(compute='_compute_fecha_devolucion',
+                                   store = True,
+                                   string = 'Fecha maxima devolucion')#usa la fecga deovolucion, aun no hay pq somos manco
 
-    usuario = fields.Many2one('res.users', string='Usuario presta',
-                              default = lambda self: self.evm.uid) ##explicar
+    usuario = fields.Many2one('res.users', string='Usuario presta',  #res userrrrrs
+                              default = lambda self: self.env.uid) ##explicar 
     
     estado = fields.Selection([('b','Borrador'),
                                ('p','Prestamo'),
@@ -112,6 +115,41 @@ class biblioteca_prestamo(models.Model):
     multas_ids = fields.One2many('biblioteca.multa',
                                  'prestamo',
                                  string='Multas')
+    
+    def confirmar_prestamo(self):  #CAMBIA DE BORRADOR A PRESTAMO (b a p)
+        for record in self:  #self son los registros, el record no tiene pq llamarse asi, es el nombre que le doy a los objetos de self
+        #Para cada registro individual (record) que encuentres dentro de la caja de registros (self), haz lo siguiente..."
+        #self son toditos los clientes, record com oesta en un bucle  for sacara cliente uno por uno
+            if not record.fecha_prestamo: #si es que no hay fecha prestamo pone la fecha actual
+                record.fecha_prestamo = fields.Datetime.now() #pone el tipo de dato de fechas, y pone la fecha actual
+            
+            record.estado = 'p'
+
+
+    def devolver(self):  #registra la devolucion  y verifica si se aplica una multa por atraso antes de pasar a d o a m
+        for record in self:
+            #VALIRDAR SI HAY ALGI QUE DEVOLVER
+            if record.estado not in 'p' or 'm': #si es que el estado no es p o m da el error
+                raise exceptions.ValidationError("Solo se pueden devolver prestamos en el estado de 'prestamo' o 'multa'") ###
+            record.fecha_devolucion = fields.Datetime.now() #guarda la fecha de devolicoon con la fecha actual
+
+            #aca luego se debe implementar una logica de la multa por atraso(luego)
+            #si la devolucion es tarde y no essta en estado multa lo pone           
+            if record.fecha_devolucion > record.fecha_maxima and not record.multa_bol: #revisa que la casilla de multa este desmarcada
+                record.estado = 'm'
+
+            else :
+                record.estado = 'd'
+
+    def _compute_fecha_devolucion(self):
+        for record in self:
+            if record.fecha_prestamo: #revisa si tiene fecha prestamo y calcula, sino nadota
+                    # timedelta(days=7) suma 7 días a la fecha del préstamo
+                record.fecha_maxima = record.fecha_prestamo + timedelta(days=7) #EXPLICARRRR
+            else:
+                record.fecha_maxima = False
+
+        
 
 
 class biblioteca_multa(models.Model):
@@ -119,39 +157,40 @@ class biblioteca_multa(models.Model):
     _description='multas multosas'
 
     name = fields.Char(string='código multa')
+    prestamo = fields.Float(string='Prestamo')
     
 #res name? res partner
 #modulo transitorio?
 #seprararr en htmls y archivos diferentes
 class biblioteca_usuario(models.Model):
     _name = 'biblioteca.usuario'
-    _description = 'Usuarios/Clientes de la Biblioteca'
-    _rec_name = 'nombre_completo' # Usaremos un campo combinado para el nombre
+    _description = 'Usuarios/Clientes de la Biblioteca' # Usaremos un campo combinado para el nombre
 
     nombre = fields.Char(string="Nombre")
     apellido = fields.Char(string="Apellido")
-    nombre_completo = fields.Char(string="Nombre Completo", compute='_compute_nombre_completo', store=True)
+    name = fields.Char(string="Nombre Completo", compute='_compute_nombre_completo', store=True)
     cedula = fields.Char('Cédula', required=True)
     email = fields.Char('Email')
     phone = fields.Char('Teléfono')
     active = fields.Boolean(default=True)
     
     # Campo calculado para combinar Nombre y Apellido (similar al name_get, pero para un campo almacenado, como es el usuario se tiene que guardar pues mi so
-    @api.depends('nombre', 'apellido')
-    def _compute_nombre_completo(self):
-        for record in self:
-            record.nombre_completo = f"{record.nombre or ''} {record.apellido or ''}".strip() #guarda el nombre completo completito
-
+    @api.depends('nombre', 'apellido') 
+    def _compute_nombre_completo(self): #funcion para sacar ek bombre completo
+    
+        for record in self: #para cada valor den la base de datos
+            record.name = f"{record.nombre or ''} {record.apellido or ''}".strip() #guarda el nombre completo completito, el or es para que si no tiene nombre o apellido no guarde nada
+            #el nombre completo sera una concatenacion del nombre y el apellido, se usa .strip para quitar espacios inecesarios
 
     # MÉTODO DE VALIDACIÓN
     @api.constrains('cedula') #diferencia api constrain y depends? onchange?
-    def _check_cedula(self):
-        for record in self:
-            cedula = record.cedula
+    def _check_cedula(self): #funcion para ver la cedula
+        for record in self: #para cada dato guardado
+            cedula = record.cedula #guarda en la variable cedula la cedula de la base de datos
             
             # 1. Verifica la longitud: Debe tener 10 dígitos
-            if len(cedula) != 10 or not cedula.isdigit():
-                raise exceptions.ValidationError("La Cédula debe contener 10 dígitos numéricos.")
+            if len(cedula) != 10 or not cedula.isdigit(): #con len verifica la longitud de la cedula, si no es igual a 10 o la cedula no es un digito (is digit revisa que todos los caracteres sean digitos)
+                raise exceptions.ValidationError("La Cédula debe contener 10 dígitos numéricos.") #
 
             # 2. Verifica los códigos de provincia (los dos primeros dígitos)
             provincia = int(cedula[0:2])
